@@ -1,15 +1,26 @@
-require("dotenv").config();
+const fs = require("fs");
+const dotenv = require("dotenv");
 const { Telegraf } = require("telegraf");
 const { initTestData, users } = require("./data/testData");
 
-// Проверка токена ДО инициализации бота
-if (!process.env.BOT_TOKEN) {
-  console.error("❌ BOT_TOKEN не установлен в .env");
+// Загружаем .env только если файл существует (локальная разработка)
+if (fs.existsSync(".env")) {
+  dotenv.config();
+  console.log("📄 Локальный .env загружен");
+} else {
+  console.log("🌐 Используем переменные окружения Railway");
+}
+
+// Берем токен из process.env (универсально)
+const BOT_TOKEN = process.env.BOT_TOKEN;
+
+if (!BOT_TOKEN) {
+  console.error("❌ BOT_TOKEN не найден в переменных окружения");
   process.exit(1);
 }
 
 // Создаём экземпляр бота
-const bot = new Telegraf(process.env.BOT_TOKEN);
+const bot = new Telegraf(BOT_TOKEN);
 
 // Загружаем тестовые данные
 initTestData();
@@ -33,7 +44,7 @@ bot.use((ctx, next) => {
   return next();
 });
 
-// Подключение хендлеров (ИСПРАВЛЕН СПИСОК)
+// Подключение хендлеров
 ["auth", "menu", "products", "cart", "orders", "info", "pricelist"].forEach(
   (handler) => {
     try {
