@@ -40,7 +40,7 @@ module.exports = (bot) => {
     bot.action(`category_${cat.id}`, (ctx) => {
       const items = products.filter((p) => p.categoryId === cat.id);
 
-      if (items.length === ) {
+      if (items.length === 0) {
         return ctx.editMessageText(
           `В категории "${cat.name}" пока нет товаров.`,
           Markup.inlineKeyboard([
